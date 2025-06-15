@@ -34,7 +34,7 @@ class MainDialog(LogoutDialog):
                     connection_name=connection_name,
                     text="Please Sign In",
                     title="Sign In",
-                    timeout=300000,
+                    timeout=100000,
                 ),
             )
         )

@@ -2,6 +2,7 @@ import os
 import sys
 import traceback
 import logging
+import json
 
 from datetime import datetime
 from config import DefaultConfig
@@ -45,13 +46,23 @@ async def messages(req: web.Request) -> web.Response:
         return web.Response(status=415)
 
     activity = Activity().deserialize(body)
-    auth_header = req.headers.get("Authorization", "")
+    auth_header = req.headers["Authorization"] if "Authorization" in req.headers else ""  
 
     try:
         response = await ADAPTER.process_activity(activity, auth_header, BOT.on_turn)
         if response:
-            return web.json_response(data=response.body, status=response.status)
+            # prevent sending None body as 'null'  
+            if response.body is None:  
+                args = {'status': response.status}  
+            else:  
+                args = {'data': response.body, 'status': response.status}
+            
+            logger.log(response)
+
+            return web.json_response(**args)
+        
         return web.Response(status=201)
+    
     except Exception as e:
         logger.error(f"Error processing request: {str(e)}")
         return web.Response(status=500)

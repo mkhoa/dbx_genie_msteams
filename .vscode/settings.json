@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/e6fea353-fd9a-4a1d-b010-aea9e09fb12c/resourceGroups/minhkhoa/providers/Microsoft.Web/sites/f1-genie-bot",
+    "appService.deploySubpath": "."
+}
