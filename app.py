@@ -57,7 +57,7 @@ async def messages(req: web.Request) -> web.Response:
             else:  
                 args = {'data': response.body, 'status': response.status}
             
-            logger.log(response)
+            logger.info(f"Response: {response}")
 
             return web.json_response(**args)
         

@@ -30,32 +30,21 @@ class AuthBot(GenieBot):
                 await turn_context.send_activity(
                     f"Hi there { member.name }. " + self.WELCOME_MESSAGE
                 )
-
-    # async def on_members_added_activity(self, members_added: List[ChannelAccount], turn_context: TurnContext):
-    #     for member in members_added:
-    #         # Greet anyone that was not the target (recipient) of this message.
-    #         # To learn more about Adaptive Cards, see https://aka.ms/msbot-adaptivecards for more details.
-    #         if member.id != turn_context.activity.recipient.id:
-    #             await turn_context.send_activity(
-    #                 "Welcome to AuthenticationBot. Type anything to get logged in. Type "
-    #                 "'logout' to sign-out."
-    #             )
-
+                
     async def on_token_response_event(self, turn_context: TurnContext):
         # Run the Dialog with the new Token Response Event Activity.
         await DialogHelper.run_dialog(
             self.dialog,
             turn_context,
-            self.conversation_state.create_property("DialogState")
+            self.conversation_state.create_property("DialogState"),
         )
-        # Retrieve user profile and conversation data
-        user_profile = await self.user_profile_accessor.get(turn_context, UserProfile)
-        
-        if hasattr(user_profile, 'token'):
-            # If the user is authenticated, process the message
-            await turn_context.send_activity(
-                f"Here is your token {user_profile.token}"
-            )
-        else:
-            print("User is not authenticated, running dialog to get token")
+
+    async def on_teams_signin_verify_state(self, turn_context: TurnContext):
+        # Run the Dialog with the new Token Response Event Activity.
+        # The OAuth Prompt needs to see the Invoke Activity in order to complete the login process.
+        await DialogHelper.run_dialog(
+            self.dialog,
+            turn_context,
+            self.conversation_state.create_property("DialogState"),
+        )
 
